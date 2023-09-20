@@ -25,16 +25,30 @@ jobs:
           sed -i 's/const RUN_NUMBER = ""/const RUN_NUMBER = "'"$GITHUB_RUN_NUMBER"'"/' vars.gd
           sed -i "s/const BUILD_TIME = \"\"/const BUILD_TIME = \"$(date +'%Y-%m-%d %H:%M:%S')\"/" vars.gd
 
-      - name: Build Godot game
+      - name: Build Godot Windows game
         uses: ./.github/composite/godot-build
         with:
           export: "Windows Desktop"
           path: "win64"
           binary: game.exe
 
+      - name: Build Godot Linux game
+        uses: ./.github/composite/godot-build
+        with:
+          export: "Linux/X11"
+          path: "linux"
+          binary: game
+
       - uses: actions/upload-artifact@v3
         name: Upload Godot Windows artifacts
         with:
           name: game-win64
           path: builds/win64/*
+          retention-days: 1
+
+      - uses: actions/upload-artifact@v3
+        name: Upload Godot Linux artifacts
+        with:
+          name: game-linux
+          path: builds/linux/*
           retention-days: 1
