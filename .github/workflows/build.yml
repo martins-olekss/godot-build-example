@@ -1,0 +1,40 @@
+name: Push
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-godot-release-windows:
+    name: build-godot-game-windows
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Godot
+        uses: ./.github/composite/godot-install-windows
+
+      - name: Get and setup rcedit
+        uses: ./.github/composite/godot-rcedit
+
+      - name: Add build metadata
+        shell: bash
+        run: |
+          sed -i 's/const COMMIT = ""/const COMMIT = "'"$GITHUB_SHA"'"/' vars.gd
+          sed -i 's/const RUN_NUMBER = ""/const RUN_NUMBER = "'"$GITHUB_RUN_NUMBER"'"/' vars.gd
+          sed -i "s/const BUILD_TIME = \"\"/const BUILD_TIME = \"$(date +'%Y-%m-%d %H:%M:%S')\"/" vars.gd
+
+      - name: Build Godot game
+        uses: ./.github/composite/godot-build
+        with:
+          export: "Windows Desktop"
+          path: "win64"
+          binary: game.exe
+
+      - uses: actions/upload-artifact@v3
+        name: Upload Godot Windows artifacts
+        with:
+          name: game-win64
+          path: builds/win64/*
+          retention-days: 1

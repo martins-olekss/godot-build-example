@@ -1,0 +1,40 @@
+name: godot
+description: "Download Godot and Godot export templates"
+
+inputs:
+  version:
+    required: false
+    description: "Godot version"
+    default: 4.1.1
+
+runs:
+  using: "composite"
+  steps:
+    - name: Cache Godot
+      id: cache-godot
+      uses: actions/cache@v3
+      with:
+        path: ~/godot
+        key: gdt-${{ inputs.version }}-${{runner.os}}
+
+    - name: Cache Godot export templates
+      id: cache-godot-export-templates
+      uses: actions/cache@v3
+      with:
+        path: ~/AppData/Roaming/Godot/export_templates/${{ inputs.version }}.stable
+        key: gdt-templates-${{ inputs.version }}
+
+    - name: Download Godot and export templates (Windows)
+      shell: bash
+      if: steps.cache-godot.outputs.cache-hit != 'true' || steps.cache-godot-export-templates.outputs.cache-hit != 'true'
+      run: |
+        mkdir -p ~/godot
+        curl -sSLO "https://downloads.tuxfamily.org/godotengine/${{ inputs.version }}/Godot_v${{ inputs.version }}-stable_win64.exe.zip"
+        unzip Godot_v${{ inputs.version }}-stable_win64.exe.zip
+        rm Godot_v${{ inputs.version }}-stable_win64.exe.zip
+        mv Godot_v${{ inputs.version }}-stable_win64.exe ~/godot/godot.exe
+        curl -sSLO "https://downloads.tuxfamily.org/godotengine/${{ inputs.version }}/Godot_v${{ inputs.version }}-stable_export_templates.tpz"
+        mkdir -v -p ~/AppData/Roaming/Godot/export_templates/${{ inputs.version }}.stable
+        mv Godot_v${{ inputs.version }}-stable_export_templates.tpz templates.zip
+        unzip -j templates.zip -d ~/AppData/Roaming/Godot/export_templates/${{ inputs.version }}.stable
+        rm templates.zip

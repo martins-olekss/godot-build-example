@@ -1,0 +1,26 @@
+name: godot-build
+description: "Build Godot Game"
+
+inputs:
+  export:
+    required: false
+    description: "--export args"
+    default: "Windows Desktop"
+
+  path:
+    required: false
+    description: "path within the builds directory"
+    default: "win64"
+
+  binary:
+    required: true
+    description: "Binary name"
+
+runs:
+  using: "composite"
+  steps:
+    - name: Create binary
+      shell: bash
+      run: |
+        mkdir -p "builds/${{ inputs.path }}"
+        ~/godot/godot.exe -v --headless --export-release "${{ inputs.export }}" "builds/${{ inputs.path }}/${{ inputs.binary }}"

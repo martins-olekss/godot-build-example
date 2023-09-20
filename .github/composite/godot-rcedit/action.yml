@@ -1,0 +1,40 @@
+name: godot-rcedit
+description: "Install and setup rcedit for godot"
+
+inputs:
+  version:
+    required: false
+    description: "rcedit version"
+    default: "1.1.1"
+
+runs:
+  using: "composite"
+
+  steps:
+    - name: Cache Rcedit
+      id: cache-rcedit
+      uses: actions/cache@v3
+      with:
+        path: "C:/rcedit"
+        key: rcedit-${{ inputs.version }}
+
+    - name: Set EDITOR_SETTINGS_FILE_PATH
+      shell: bash
+      run: echo "EDITOR_SETTINGS_FILE_PATH=$APPDATA/Godot/editor_settings-4.tres" >> $GITHUB_ENV
+
+    - name: Create Editor Settings File
+      shell: bash
+      run: |
+        mkdir -p "$APPDATA/Godot"
+        echo '[gd_resource type="EditorSettings" load_steps=1 format=3]' > $EDITOR_SETTINGS_FILE_PATH
+        echo '' >> $EDITOR_SETTINGS_FILE_PATH
+        echo '[resource]' >> $EDITOR_SETTINGS_FILE_PATH
+        echo 'export/windows/rcedit = "C:/rcedit/rcedit-x64.exe"' >> $EDITOR_SETTINGS_FILE_PATH
+
+    - name: Download rcedit
+      shell: bash
+      if: steps.cache-rcedit.outputs.cache-hit != 'true'
+      run: |
+        mkdir -p /c/rcedit
+        cd /c/rcedit
+        curl -sSLO "https://github.com/electron/rcedit/releases/download/v${{ inputs.version }}/rcedit-x64.exe"
