@@ -7,6 +7,7 @@ jobs:
   hello-world:
     name: Hello World
     runs-on: ubuntu-latest
-    shell: sh
-    run: |
-      echo "hello world"
+    steps:
+      - shell: sh
+        run: |
+          echo "hello world"
