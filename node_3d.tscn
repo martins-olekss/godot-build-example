@@ -1,0 +1,29 @@
+[gd_scene load_steps=5 format=3 uid="uid://mcaekqu40lni"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_5o270"]
+albedo_color = Color(0.443137, 0.164706, 0.376471, 1)
+
+[sub_resource type="BoxMesh" id="BoxMesh_mcndp"]
+material = SubResource("StandardMaterial3D_5o270")
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_tfkbm"]
+albedo_color = Color(0.180392, 0.34902, 0.32549, 1)
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_4jbbw"]
+material = SubResource("StandardMaterial3D_tfkbm")
+
+[node name="Node3D" type="Node3D"]
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+mesh = SubResource("BoxMesh_mcndp")
+
+[node name="Camera3D" type="Camera3D" parent="."]
+transform = Transform3D(0.975607, 0, -0.219523, 0, 1, 0, 0.219523, 0, 0.975607, -1.75516, 0.232768, 3.94226)
+
+[node name="MeshInstance3D2" type="MeshInstance3D" parent="."]
+transform = Transform3D(3.6, 0, 0, 0, 1, 0, 0, 0, 3.3, 0, -1, 0)
+mesh = SubResource("PlaneMesh_4jbbw")
+
+[node name="SpotLight3D" type="SpotLight3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, -0.188633, 0.982048, 0, -0.982048, -0.188633, 0, 2.75646, -1.3866)
+light_energy = 12.733
